@@ -6,16 +6,19 @@ The Tech Stack used for this repo is **Node.js and Mongo Database**
 These below API enpoints allows user to create clusters,machines and add tags to them.And also delete the clusters and machines and perform operation based on the tags.
 Basically APIs does everything required to manage the clusters and machines and it has been tested in _**Postman**_ application
 
+
+Deployed at : https://nodejs-restapi-backend.herokuapp.com/
+
 **API ENDPOINTS**
 
 <b>_To get all the data about clusters_</b>
 
-GET : localhost:9000
+GET : localhost:9000 (or) https://nodejs-restapi-backend.herokuapp.com/
 
 
 <b>_To add new clusters_</b>
 
-POST : localhost:9000/add 
+POST : localhost:9000/add (or) https://nodejs-restapi-backend.herokuapp.com/add
 
 req.body = {
     "clusterName":"C5",
@@ -25,11 +28,11 @@ req.body = {
 
 <b>_To Delete the cluster_</b>
 
-DELETE : localhost:9000/delete/:clusterName
+DELETE : localhost:9000/delete/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/delete/:clustername
 
 <b>_To add machines to cluster_</b>
 
-PUT : localhost:9000/machines
+PUT : localhost:9000/machines (or) https://nodejs-restapi-backend.herokuapp.com/machines
 
 req.body =  {
     "clusterName":"C2",
@@ -43,7 +46,7 @@ req.body =  {
 
 <b>_To update tags on machine_</b>
 
-PUT : localhost:9000/machines/tags/:clusterName/:machinename
+PUT : localhost:9000/machines/tags/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:clusterName/:machinename
 
 req.body ={
     "tags":"stop"
@@ -51,7 +54,7 @@ req.body ={
 
 <b>_To delete machines from cluster_</b>
 
-DELETE : localhost:9000/machines/delete/:clusterName/:machinename
+DELETE : localhost:9000/machines/delete/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/delete/:clusterName/:machinename
 
 <b>_To get data based on tags_</b>
 
@@ -68,6 +71,7 @@ sample tags can be start/stop/reboot
 pm.test("Status code is 200", function () {
     pm.response.to.have.status(200);
 });
+
 pm.test("Body matches string", function () {
     pm.expect(pm.response.text()).to.include("clusterName");
     pm.expect(pm.response.text()).to.include("clusterRegion");
@@ -87,9 +91,11 @@ req.body = {
 }
 
 pm.test("Successful POST request", function () {
+
     pm.expect(pm.response.code).to.be.oneOf([201, 202]);
 
 });
+
 pm.test("Body matches string", function () {
     pm.expect(pm.response.text()).to.include('{"message":"data created"}');
 });
@@ -119,6 +125,7 @@ req.body = {
 pm.test("Status code is 200", function () {
     pm.response.to.have.status(200);
 });
+
 pm.test("Body matches string", function () {
     pm.expect(pm.response.text()).to.include('{"message":"DATA UPDATED"}');
 });
