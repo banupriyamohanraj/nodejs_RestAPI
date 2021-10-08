@@ -104,3 +104,16 @@ pm.test("Body matches string", function () {
           pm.expect(pm.response.text()).to.include("instance");
            pm.expect(pm.response.text()).to.include("tags");
 });
+
+//TestCase : 8 --> PUT : localhost:9000/machines/tags/:tags
+
+req.body ={
+    "tags":"stop"
+} 
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"tag updated"}');
+});

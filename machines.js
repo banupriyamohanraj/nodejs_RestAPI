@@ -127,5 +127,29 @@ router.get("/tags/:tags",async(req,res)=>{
     }
 })
 
+//updating multiple machines based on tags
+router.put("/tags/:tags",async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+        let data= await  db.collection('clusters').updateMany({ "machines.tags":req.params.tags},{$set:{"machines.$[].tags": req.body.tags }},false,true) 
+            
+           if(data){
+            res.status('200').json({ message: "tag updated" });
+           }else{
+            res.status("401").json({ message: "DATA NOT AVAILABLE" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
+
 
 module.exports = router;

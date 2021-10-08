@@ -68,7 +68,7 @@ app.delete('/delete/:clusterName', async (req, res) => {
 
         let data = await db.collection("clusters").findOneAndDelete({ clusterName :req.params.clusterName })
             if(data){
-                res.status(200).json({message:"item deleted"})
+                res.status(200).json({message:"tags updated"})
             }
             else {
                 res.status(404).json({ message: "not found" })
