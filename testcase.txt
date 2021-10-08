@@ -1,0 +1,387 @@
+TestCase ID : 1 -->  GET : localhost:9000/ (or) https://nodejs-restapi-backend.herokuapp.com/
+
+Testname : To get all the data about clusters
+
+Test steps:
+1. set the http request as GET method
+2. set The URL to get all the data about cluster as localhost:9000/ (or) https://nodejs-restapi-backend.herokuapp.com/
+
+Expected output: {
+    "data": [
+        {
+            "_id": "615ff97f1e2ffeea87fbc9f0",
+            "clusterName": "C1",
+            "clusterRegion": "us-east1",
+            "machines": [
+                {
+                    "name": "M1",
+                    "ipaddress": "192.81.03.2",
+                    "instance-type": "EC3",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M5",
+                    "ipaddress": "191.01.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        },
+        {
+            "_id": "615ff9a11e2ffeea87fbc9f1",
+            "clusterName": "C2",
+            "clusterRegion": "us-central1",
+            "machines": [
+                {
+                    "name": "M8",
+                    "ipaddress": "191.01.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        },
+        {
+            "_id": "615ff9b41e2ffeea87fbc9f2",
+            "clusterName": "C3",
+            "clusterRegion": "us-west1",
+            "machines": [
+                {
+                    "name": "M3",
+                    "ipaddress": "191.22.03.2",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M4",
+                    "ipaddress": "191.22.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M6",
+                    "ipaddress": "191.13.08.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M7",
+                    "ipaddress": "191.13.08.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        }
+    ]
+}
+
+
+postman testcases :
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include("clusterName");
+    pm.expect(pm.response.text()).to.include("clusterRegion");
+    pm.expect(pm.response.text()).to.include("machines");
+    pm.expect(pm.response.text()).to.include("name");
+     pm.expect(pm.response.text()).to.include("ipaddress");
+      pm.expect(pm.response.text()).to.include("instance-type");
+       pm.expect(pm.response.text()).to.include("tags");  
+});
+
+________________________________________________________________________________________________________________________________________________
+
+TestCase ID : 2 -->  POST : localhost:9000/add  (or) https://nodejs-restapi-backend.herokuapp.com/add
+
+Testname : To add new clusters
+
+Test steps:
+1. set the http request as POST method
+2. set The URL to post a new cluster in the db as  localhost:9000/add  (or) https://nodejs-restapi-backend.herokuapp.com/add
+
+TESTDATA:
+
+req.body = {
+    "clusterName":"C4",
+    "clusterRegion":"asia-southeast",
+    "machines":[]
+}
+
+Expected output: {
+    "message": "cluster created"
+}
+
+
+postman testcases :
+
+pm.test("Successful POST request", function () {
+    pm.expect(pm.response.code).to.be.oneOf([201, 202]);
+
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"cluster created"}');
+});
+
+________________________________________________________________________________________________________________________________________________
+
+TestCase ID: 3 -->  DELETE : localhost:9000/delete/:clusterName
+
+Testname : To Delete the cluster
+
+Test steps:
+1. set the http request as DELETE method
+2. set The URL to delete a cluster from the db as  localhost:9000/delete/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/delete/:clustername
+
+Expected output:
+{
+    "message": "cluster deleted"
+}
+
+
+postman testcases :
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"cluster deleted"}');
+});
+
+_________________________________________________________________________________________________________________________________________________
+
+TestCase ID : 4 -->  PUT : localhost:9000/machines/:clusterName
+
+Testname : To add machines to cluster
+
+Test steps:
+1. set the http request as PUT method
+2. set The URL to add machine to the cluster in the db as  localhost:9000/machines/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/machines/:clusterName
+
+TESTDATA:
+
+req.body = {
+  
+    "machines":{
+        "name":"M6",
+        "ipaddress":"191.13.08.1",
+        "instance-type":"EC2",
+        "tags":"start"   
+    }
+}
+
+Expected output:
+{
+    "message":"machine added to cluster"
+}
+
+POSITIVE-CASES:
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"machine added to cluster"}');
+});
+
+
+NEGATIVE-CASES:
+
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"machine already added to one of the cluster"}');
+
+});
+
+pm.test("Data already added", function () {
+    pm.expect(pm.response.code).to.be.oneOf([208]);
+});
+
+________________________________________________________________________________________________________________________________________________
+
+
+TestCase ID : 5 -->  PUT : localhost:9000/machines/tags/:clusterName/:machinename
+
+Testname : To update tags on machine
+
+Test steps:
+1. set the http request as PUT method
+2. set The URL to update tags on machine in the db as  localhost:9000/machines/tags/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:clusterName/:machinename
+
+
+TESTDATA
+req.body ={
+    "tags":"stop"
+} 
+
+Expected output:
+{
+    "message": "tag updated"
+}
+
+postman testcases:
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"tag updated"}');
+});
+
+________________________________________________________________________________________________________________________________________________
+
+TestCase : 6 -->  DELETE : localhost:9000/machines/delete/:clusterName/:machinename
+
+Testname: To delete machines from cluster
+
+Test steps:
+1. set the http request as DELETE method
+2. set The URL to delete machine from cluster in db as  localhost:9000/machines/delete/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/delete/:clusterName/:machinename
+
+Expected output:
+{
+    "message":"machine deleted"
+}
+
+postman testcases:
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"machine deleted"}');
+});
+
+________________________________________________________________________________________________________________________________________________
+
+TestCase : 7 -->  GET : localhost:9000/machines/tags/:tags
+
+Testname: To get data based on tags
+
+Test steps:
+1. set the http request as GET method
+2. set The URL find out the clusters and machines which have tags as start,stop and reboot operations in db as  localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
+
+
+TESTDATA
+req.body ={
+    "tags":"stop"
+} 
+
+Expected output:
+{
+    "data": [
+        {
+            "_id": "615ff97f1e2ffeea87fbc9f0",
+            "clusterName": "C1",
+            "clusterRegion": "us-east1",
+            "machines": [
+                {
+                    "name": "M1",
+                    "ipaddress": "192.81.03.2",
+                    "instance-type": "EC3",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M5",
+                    "ipaddress": "191.01.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        },
+        {
+            "_id": "615ff9a11e2ffeea87fbc9f1",
+            "clusterName": "C2",
+            "clusterRegion": "us-central1",
+            "machines": [
+                {
+                    "name": "M8",
+                    "ipaddress": "191.01.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        },
+        {
+            "_id": "615ff9b41e2ffeea87fbc9f2",
+            "clusterName": "C3",
+            "clusterRegion": "us-west1",
+            "machines": [
+                {
+                    "name": "M3",
+                    "ipaddress": "191.22.03.2",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M4",
+                    "ipaddress": "191.22.07.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M6",
+                    "ipaddress": "191.13.08.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                },
+                {
+                    "name": "M7",
+                    "ipaddress": "191.13.08.1",
+                    "instance-type": "EC2",
+                    "tags": "stop"
+                }
+            ]
+        }
+    ]
+}
+
+
+
+postman testcases:
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include("data");
+     pm.expect(pm.response.text()).to.include("clusterName");
+      pm.expect(pm.response.text()).to.include("clusterRegion");
+       pm.expect(pm.response.text()).to.include("machines");
+        pm.expect(pm.response.text()).to.include("name");
+         pm.expect(pm.response.text()).to.include("ipaddress");
+          pm.expect(pm.response.text()).to.include("instance");
+           pm.expect(pm.response.text()).to.include("tags");
+});
+
+___________________________________________________________________________________________________________________________________________________
+
+TestCase : 8 --> PUT : localhost:9000/machines/tags/:tags
+
+Testname: To delete machines from cluster
+
+Test steps:
+1. set the http request as GET method
+2. set The URL to update the tags on multiple machines at the same time in db as  localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
+
+
+TESTDATA
+req.body ={
+    "tags":"reboot"
+} 
+
+Expected output:
+{
+    "message":"tags updated"
+}
+
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include('{"message":"tags updated"}');
+});

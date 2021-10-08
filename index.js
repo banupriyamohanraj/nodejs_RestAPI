@@ -47,7 +47,7 @@ app.post('/add',async(req,res)=>{
         let data = await db.collection("clusters").findOne({clusterName:req.body.clusterName })
         if (!data) {
             await db.collection("clusters").insertOne({clusterName:req.body.clusterName,clusterRegion:req.body.clusterRegion,machines:req.body.machines});
-            res.status('201').json({ message: "data created" });
+            res.status('201').json({ message: "cluster created" });
         } else {
             res.status("401").json({ message: "data is added before" })
         }
@@ -68,10 +68,10 @@ app.delete('/delete/:clusterName', async (req, res) => {
 
         let data = await db.collection("clusters").findOneAndDelete({ clusterName :req.params.clusterName })
             if(data){
-                res.status(200).json({message:"tags updated"})
+                res.status(200).json({message:"cluster deleted"})
             }
             else {
-                res.status(404).json({ message: "not found" })
+                res.status(404).json({ message: "cluster not found" })
             }  
             client.close();
     } catch (error) {

@@ -12,18 +12,20 @@ router.use(express.json());
 
 
 //adding new machines to clusters
-router.put("/",async(req,res)=>{
+router.put("/:clusterName",async(req,res)=>{
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
-        let data = await db.collection("clusters").findOne({clusterName:req.body.clusterName })
-        if (data) {
-           
-            await  db.collection('clusters').updateOne({ _id:ObjectId(data._id)},{$push:{machines :req.body.machines }}) 
-            res.status('200').json({ message: "DATA UPDATED" });
-        } else {
-            res.status("401").json({ message: "DATA NOT AVAILABLE" })
-        }
+       
+        let data = await db.collection("clusters").findOne({"machines.name":req.body.machines.name});
+        if (!data) {
+                await  db.collection('clusters').updateOne({ clusterName:req.params.clusterName},{$push:{machines :req.body.machines }}) 
+                res.status('200').json({ message: "machine added to cluster" });
+            }else{
+                res.status("208").json({message:"machine already added to one of the cluster"});
+            }
+          
+        
         client.close();
     } catch (error) {
         console.log(error)
@@ -42,7 +44,7 @@ router.delete('/delete/:clusterName/:machinename', async (req, res) => {
             if(data){
                
                 await  db.collection('clusters').updateOne({ _id:ObjectId(data._id)},{$pull:{machines:{name :req.params.machinename} }}) 
-                res.status(200).json({message:"item deleted"})
+                res.status(200).json({message:"machine deleted"})
             }
             else {
                 res.status(404).json({ message: "not found" })
@@ -55,7 +57,7 @@ router.delete('/delete/:clusterName/:machinename', async (req, res) => {
 
 })
 
-//updating tags on machines
+//updating tag on single machine
 router.put("/tags/:clusterName/:machinename",async(req,res)=>{
     try {
         let client = await MongoClient.connect(dbURL);
@@ -77,6 +79,31 @@ router.put("/tags/:clusterName/:machinename",async(req,res)=>{
         res.status(500).json({message:"Internal server error"})
     }
 })
+
+//updating tags on multiple machines
+router.put("/tags/:tags",async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+        let data= await  db.collection('clusters').updateMany({ "machines.tags":req.params.tags},{$set:{"machines.$[].tags": req.body.tags }},false,true) 
+            
+           if(data){
+            res.status('200').json({ message: "tags updated" });
+           }else{
+            res.status("401").json({ message: "DATA NOT AVAILABLE" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
+
 
 
 //finding machines based on tags
@@ -113,7 +140,7 @@ router.get("/tags/:tags",async(req,res)=>{
                 }
             }
         ]).toArray();
-        if (data) {
+        if (data.length >0) {
             res.status('200').json({data});
         }else {
             res.status("404").json({ message: "DATA NOT AVAILABLE" })
@@ -127,29 +154,7 @@ router.get("/tags/:tags",async(req,res)=>{
     }
 })
 
-//updating multiple machines based on tags
-router.put("/tags/:tags",async(req,res)=>{
-    try {
-        let client = await MongoClient.connect(dbURL);
-        let db = client.db("cloud");   
-        let data= await  db.collection('clusters').updateMany({ "machines.tags":req.params.tags},{$set:{"machines.$[].tags": req.body.tags }},false,true) 
-            
-           if(data){
-            res.status('200').json({ message: "tag updated" });
-           }else{
-            res.status("401").json({ message: "DATA NOT AVAILABLE" })
-           }
-           
-        
-        
-        client.close();
-        
-    }
-    catch(error){
-        console.log(error);
-        res.status(500).json({message:"Internal server error"})
-    }
-})
+
 
 
 module.exports = router;
