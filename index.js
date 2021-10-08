@@ -40,7 +40,7 @@ app.get("/", async (req, res) => {
 
 
 //create a new cluster
-app.post('/',async(req,res)=>{
+app.post('/add',async(req,res)=>{
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
