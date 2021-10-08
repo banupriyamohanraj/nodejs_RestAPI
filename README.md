@@ -18,7 +18,7 @@ GET : localhost:9000 (or) https://nodejs-restapi-backend.herokuapp.com/
 
 <b>_To add new clusters_</b>
 
-POST : localhost:9000/ (or) https://nodejs-restapi-backend.herokuapp.com/
+POST : localhost:9000/add (or) https://nodejs-restapi-backend.herokuapp.com/add
 
 req.body = {
     "clusterName":"C5",
