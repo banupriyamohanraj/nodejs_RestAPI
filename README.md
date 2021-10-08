@@ -11,170 +11,56 @@ Deployed at : https://nodejs-restapi-backend.herokuapp.com/
 
 **API ENDPOINTS**
 
-<b>_To get all the data about clusters_</b>
+<b>To get all the data about clusters</b>
+
+_DESCRIPTION :_ This GET request fetches the data about all clusters and machines information that is available in the Database
 
 GET : localhost:9000 (or) https://nodejs-restapi-backend.herokuapp.com/
 
 
-<b>_To add new clusters_</b>
+<b>To add new clusters</b>
+
+_DESCRIPTION :_ This POST request allows the user to create a new cluster with zero machines initially.
 
 POST : localhost:9000/add (or) https://nodejs-restapi-backend.herokuapp.com/add
 
-req.body = {
-    "clusterName":"C5",
-    "clusterRegion":"asia-west1",
-    "machines":[]
-}
+<b>To Delete the cluster</b>
 
-<b>_To Delete the cluster_</b>
+_DESCRIPTION :_ This DELETE request allows the user to delete the cluster based on the user requirement. The cluster name is fetched from the API params which allows the system to identify the clsuter and delete it
 
 DELETE : localhost:9000/delete/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/delete/:clustername
 
-<b>_To add machines to cluster_</b>
+<b>To add machines to cluster</b>
 
-PUT : localhost:9000/machines (or) https://nodejs-restapi-backend.herokuapp.com/machines
+_DESCRIPTION:_  This PUT request allows the user to add machines to the existing cluster based on the cluster name.Only new machines can be added to cluster.Existing machines can not be added to different cluster.
 
-req.body =  {
-    "clusterName":"C2",
-    "machines":{
-        "name":"M7",
-        "ipaddress":"191.01.07.1",
-        "instance-type":"EC2",
-        "tags":"start"
-        }
-}
+PUT : localhost:9000/machines/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/machines/:clusterName
 
 <b>_To update tags on machine_</b>
 
+_DESCRIPTION:_  This PUT request allows the user to update tag in machines based on the user requirement of clustername and machine name.
+
 PUT : localhost:9000/machines/tags/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:clusterName/:machinename
 
-req.body ={
-    "tags":"stop"
-} 
-
 <b>_To delete machines from cluster_</b>
+
+_DESCRIPTION:_ This DELETE request allows user to delete machine from the cluster of user's choice.
 
 DELETE : localhost:9000/machines/delete/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/delete/:clusterName/:machinename
 
 <b>_To get data based on tags_</b>
 
-GET : localhost:9000/machines/tags/:tags
+_DESCRIPTION:_ This GET request is to find out the clusters and machines which have tags as start,stop and reboot operations. For Example, If the user needs only machines that has the tags as Reboot, Then the system fetches only the reeboot machines. This request helps user to classify the tags and fetch them accordingly.
+
+GET : localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
 
 sample tags can be start/stop/reboot
 
+<b>_To update multiple machines based on tags_</b>
 
-**TESTCASES**
+_DESCRIPTION:_ This PUT request allows user to update the tags on multiple machines at the same time. For Example, it helps the user to stop all the machines which are rebooting and start them through same api endpoint
 
-**TestCase : 1 -->  GET : localhost:9000/**
-
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include("clusterName");
-    pm.expect(pm.response.text()).to.include("clusterRegion");
-    pm.expect(pm.response.text()).to.include("machines");
-    pm.expect(pm.response.text()).to.include("name");
-     pm.expect(pm.response.text()).to.include("ipaddress");
-      pm.expect(pm.response.text()).to.include("instance-type");
-       pm.expect(pm.response.text()).to.include("tags");  
-});
-
-**TestCase : 2 -->  POST : localhost:9000/**
-
-req.body = {
-    "clusterName":"C5",
-    "clusterRegion":"asia-west1",
-    "machines":[]
-}
-
-pm.test("Successful POST request", function () {
-
-    pm.expect(pm.response.code).to.be.oneOf([201, 202]);
-
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include('{"message":"data created"}');
-});
-
-**TestCase : 3 -->  DELETE : localhost:9000/delete/:clusterName**
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include('{"message":"item deleted"}');
-});
-
-**TestCase : 4 -->  PUT : localhost:9000/machines**
-
-req.body = {
-    "clusterName":"C2",
-    "machines":{
-        "name":"M2",
-        "ipaddress":"191.01.07.1",
-        "instance-type":"EC2",
-        "tags":"start"
-    }
-}
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include('{"message":"DATA UPDATED"}');
-});
-
-**TestCase : 5 -->  PUT : localhost:9000/machines/tags/:clusterName/:machinename**
-
-
-req.body ={
-    "tags":"stop"
-} 
-
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include('{"message":"tag updated"}');
-});
-
-**TestCase : 6 -->  DELETE : localhost:9000/machines/delete/:clusterName/:machinename**
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include('{"message":"item deleted"}');
-});
-
-
-**TestCase : 7 -->  GET : localhost:9000/machines/tags/:tags**
-
-pm.test("Status code is 200", function () {
-    pm.response.to.have.status(200);
-});
-
-pm.test("Body matches string", function () {
-    pm.expect(pm.response.text()).to.include("data");
-     pm.expect(pm.response.text()).to.include("clusterName");
-      pm.expect(pm.response.text()).to.include("clusterRegion");
-       pm.expect(pm.response.text()).to.include("machines");
-        pm.expect(pm.response.text()).to.include("name");
-         pm.expect(pm.response.text()).to.include("ipaddress");
-          pm.expect(pm.response.text()).to.include("instance");
-           pm.expect(pm.response.text()).to.include("tags");
-});
-
-
+PUT : localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
 
 
 
