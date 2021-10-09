@@ -49,7 +49,7 @@ app.post('/add',async(req,res)=>{
             await db.collection("clusters").insertOne({clusterName:req.body.clusterName,clusterRegion:req.body.clusterRegion,machines:req.body.machines});
             res.status('201').json({ message: "cluster created" });
         } else {
-            res.status("401").json({ message: "data is added before" })
+            res.status("401").json({ message: "cluster alraedy exists" })
         }
         client.close();
     } catch (error) {

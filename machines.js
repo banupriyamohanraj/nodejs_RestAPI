@@ -47,7 +47,7 @@ router.delete('/delete/:clusterName/:machinename', async (req, res) => {
                 res.status(200).json({message:"machine deleted"})
             }
             else {
-                res.status(404).json({ message: "not found" })
+                res.status(404).json({ message: "Machine not found" })
             }  
             client.close();
     } catch (error) {

@@ -99,6 +99,7 @@ Testname : To add new clusters
 Test steps:
 1. set the http request as POST method
 2. set The URL to post a new cluster in the db as  localhost:9000/add  (or) https://nodejs-restapi-backend.herokuapp.com/add
+3. set the body request in json format containing fields clusterName,clusterRegion and machines 
 
 TESTDATA:
 
@@ -132,6 +133,7 @@ Testname : To Delete the cluster
 Test steps:
 1. set the http request as DELETE method
 2. set The URL to delete a cluster from the db as  localhost:9000/delete/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/delete/:clustername
+3. choose the cluster that has to be deleted in the request params
 
 Expected output:
 {
@@ -158,6 +160,9 @@ Testname : To add machines to cluster
 Test steps:
 1. set the http request as PUT method
 2. set The URL to add machine to the cluster in the db as  localhost:9000/machines/:clusterName (or) https://nodejs-restapi-backend.herokuapp.com/machines/:clusterName
+3. choose the cluster that has to be updated in the request params
+4.set the body request in json format.
+5.add the json data under machines field containing the fieldnames as name,ipaddress,instance-type and tags 
 
 TESTDATA:
 
@@ -207,7 +212,8 @@ Testname : To update tags on machine
 Test steps:
 1. set the http request as PUT method
 2. set The URL to update tags on machine in the db as  localhost:9000/machines/tags/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:clusterName/:machinename
-
+3. choose the cluster and machine in the request params that has to be updated with tags as start,stop and reboot.
+4. set the body request in json format containing the field name as tags
 
 TESTDATA
 req.body ={
@@ -238,6 +244,8 @@ Testname: To delete machines from cluster
 Test steps:
 1. set the http request as DELETE method
 2. set The URL to delete machine from cluster in db as  localhost:9000/machines/delete/:clusterName/:machinename (or) https://nodejs-restapi-backend.herokuapp.com/machines/delete/:clusterName/:machinename
+3. choose the cluster and the machine that to be deleted in request params
+
 
 Expected output:
 {
@@ -263,12 +271,7 @@ Testname: To get data based on tags
 Test steps:
 1. set the http request as GET method
 2. set The URL find out the clusters and machines which have tags as start,stop and reboot operations in db as  localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
-
-
-TESTDATA
-req.body ={
-    "tags":"stop"
-} 
+3.choose the tags as start,stop and reboot and get all the information about the particular tag.
 
 Expected output:
 {
@@ -367,7 +370,7 @@ Testname: To delete machines from cluster
 Test steps:
 1. set the http request as GET method
 2. set The URL to update the tags on multiple machines at the same time in db as  localhost:9000/machines/tags/:tags (or) https://nodejs-restapi-backend.herokuapp.com/machines/tags/:tags
-
+3. choose the tag in request params and update it with new tag in the request body.
 
 TESTDATA
 req.body ={
@@ -378,6 +381,9 @@ Expected output:
 {
     "message":"tags updated"
 }
+
+
+postman testcases:
 
 pm.test("Status code is 200", function () {
     pm.response.to.have.status(200);
