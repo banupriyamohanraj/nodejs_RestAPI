@@ -107,6 +107,26 @@ router.put("/tags/:tags",async(req,res)=>{
 
 
 //finding machines based on tags
+// router.get("/tags/:tags",async(req,res)=>{
+//     try {
+        
+//         let client = await MongoClient.connect(dbURL);
+//         let db = client.db("cloud");   
+//         let data= await  db.collection('clusters').find({machines:{$elemMatch:{tags:req.params.tags}}}).toArray();
+            
+//            if(data){
+//             res.status('200').json({data });
+//            }else{
+//             res.status("404").json({ message: "DATA NOT AVAILABLE" })
+//            }
+           
+//         client.close();
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({message:"Internal server error"})
+//     }
+// })
 router.get("/tags/:tags",async(req,res)=>{
     try {
 
@@ -154,7 +174,188 @@ router.get("/tags/:tags",async(req,res)=>{
     }
 })
 
+router.get('/machinecount',async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+    
+        let data= await  db.collection('clusters').find({machines:{$exists:true}}).toArray()
+            
+           if(data){
+            res.status('200').json({ data});
+           }else{
+            res.status("404").json({ message: "count not found" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
 
 
+//to get all the machines which are running
+
+router.get('/start',async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+    
+        let data= await  db.collection('clusters').aggregate([
+            {
+               "$match" : {
+                   "machines" : {
+                      "$elemMatch" : {
+                         "$and" : [
+                            { "tags" : "start" }
+                         ]
+                      }
+                   },
+               }
+            },
+            {
+               "$project" : {
+                   "clusterName" : 1, "clusterRegion" : 1,
+                   "machines" : {
+                      "$filter" : {
+                         "input" : "$machines",
+                         "as" : "machines",
+                         "cond" : {
+                            "$and" : [
+                               { "$eq" : [ "$$machines.tags", "start" ] }
+                            ]
+                         }
+                      }
+                   }
+               }
+            }
+            ]).toArray()
+           if(data){
+            res.status('200').json({ data});
+           }else{
+            res.status("404").json({ message: "count not found" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
+
+
+//to get all the machines which are rebooting
+router.get('/reboot',async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+    
+        let data= await  db.collection('clusters').aggregate([
+            {
+               "$match" : {
+                   "machines" : {
+                      "$elemMatch" : {
+                         "$and" : [
+                            { "tags" : "reboot" }
+                         ]
+                      }
+                   },
+               }
+            },
+            {
+               "$project" : {
+                   "clusterName" : 1, "clusterRegion" : 1,
+                   "machines" : {
+                      "$filter" : {
+                         "input" : "$machines",
+                         "as" : "machines",
+                         "cond" : {
+                            "$and" : [
+                               { "$eq" : [ "$$machines.tags", "reboot" ] }
+                            ]
+                         }
+                      }
+                   }
+               }
+            }
+            ]).toArray()
+           if(data){
+            res.status('200').json({ data});
+           }else{
+            res.status("404").json({ message: "count not found" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
+
+
+//to get all the machines which is inactive.
+router.get('/stop',async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = client.db("cloud");   
+    
+        let data= await  db.collection('clusters').aggregate([
+            {
+               "$match" : {
+                   "machines" : {
+                      "$elemMatch" : {
+                         "$and" : [
+                            { "tags" : "stop" }
+                         ]
+                      }
+                   },
+               }
+            },
+            {
+               "$project" : {
+                   "clusterName" : 1, "clusterRegion" : 1,
+                   "machines" : {
+                      "$filter" : {
+                         "input" : "$machines",
+                         "as" : "machines",
+                         "cond" : {
+                            "$and" : [
+                               { "$eq" : [ "$$machines.tags", "stop" ] }
+                            ]
+                         }
+                      }
+                   }
+               }
+            }
+            ]).toArray()
+           if(data){
+            res.status('200').json({ data});
+           }else{
+            res.status("404").json({ message: "count not found" })
+           }
+           
+        
+        
+        client.close();
+        
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message:"Internal server error"})
+    }
+})
 
 module.exports = router;
