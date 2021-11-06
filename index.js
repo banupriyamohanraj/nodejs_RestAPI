@@ -39,6 +39,26 @@ app.get("/", async (req, res) => {
 })
 
 
+//get single cluster info
+app.get("/:clusterName",async(req,res)=>{
+    try {
+        let client = await MongoClient.connect(dbURL);
+        let db = await client.db('cloud');
+        let data = await db.collection("clusters").findOne({clusterName:req.params.clusterName })
+        if (data) {
+            
+            res.status(200).json(data)
+        } else {
+            res.status(404).json({ message: "no data found" })
+        }
+        client.close();
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
+
 //create a new cluster
 app.post('/add',async(req,res)=>{
     try {
@@ -49,7 +69,7 @@ app.post('/add',async(req,res)=>{
             await db.collection("clusters").insertOne({clusterName:req.body.clusterName,clusterRegion:req.body.clusterRegion,machines:req.body.machines});
             res.status('201').json({ message: "cluster created" });
         } else {
-            res.status("401").json({ message: "cluster alraedy exists" })
+            res.status("401").json({ message: "cluster already exists" })
         }
         client.close();
     } catch (error) {

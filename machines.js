@@ -220,6 +220,8 @@ router.get('/start',async(req,res)=>{
             },
             {
                "$project" : {
+                // "clusterName" : 1, "clusterRegion" : 1,
+                // "startCount":{$cond:{if:{$isArray:"$machines"},then:{$size:"$machines"},else:"NA"}}
                    "clusterName" : 1, "clusterRegion" : 1,
                    "machines" : {
                       "$filter" : {
@@ -236,6 +238,7 @@ router.get('/start',async(req,res)=>{
             }
             ]).toArray()
            if(data){
+              
             res.status('200').json({ data});
            }else{
             res.status("404").json({ message: "count not found" })
