@@ -11,7 +11,9 @@ const port = process.env.PORT || 9000
 const dbURL = process.env.DB_URL || 'mongodb://127.0.0.1:27017'
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(({
+    origin: 'https://cloudapp-mern.netlify.app'
+})));
 app.use("/machines",machines)
 
 
