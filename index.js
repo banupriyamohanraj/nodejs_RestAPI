@@ -1,9 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 require ("dotenv").config();
+
 const { MongoClient} = require('mongodb')
 const{ObjectId}= require('mongodb');
 const machines = require('./machines')
+const userAuth = require('./userAuth')
+const authorize = require('./authorize')
 
 const app = express();
 
@@ -15,13 +18,14 @@ app.use(cors(({
     origin: 'https://cloudapp-mern.netlify.app'
 })));
 app.use("/machines",machines)
+app.use("/auth",userAuth)
 
 
 
 
 //ROUTES
 //get all the clusters
-app.get("/", async (req, res) => {
+app.get("/",authorize, async (req, res) => {
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
