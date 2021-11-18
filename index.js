@@ -14,9 +14,7 @@ const port = process.env.PORT || 9000
 const dbURL = process.env.DB_URL || 'mongodb://127.0.0.1:27017'
 
 app.use(express.json());
-app.use(cors(({
-    origin: 'https://cloudapp-mern.netlify.app'
-})));
+app.use(cors());
 app.use("/machines",machines)
 app.use("/auth",userAuth)
 
@@ -46,7 +44,7 @@ app.get("/",authorize, async (req, res) => {
 
 
 //get single cluster info
-app.get("/:clusterName",async(req,res)=>{
+app.get("/:clusterName",authorize,async(req,res)=>{
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
@@ -66,7 +64,7 @@ app.get("/:clusterName",async(req,res)=>{
 
 
 //create a new cluster
-app.post('/add',async(req,res)=>{
+app.post('/add',authorize,async(req,res)=>{
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
@@ -87,7 +85,7 @@ app.post('/add',async(req,res)=>{
 
 
 //delete a cluster
-app.delete('/delete/:clusterName', async (req, res) => {
+app.delete('/delete/:clusterName',authorize, async (req, res) => {
     try {
         let client = await MongoClient.connect(dbURL);
         let db = await client.db('cloud');
