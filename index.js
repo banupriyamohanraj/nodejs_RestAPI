@@ -7,7 +7,7 @@ const{ObjectId}= require('mongodb');
 const machines = require('./machines')
 const userAuth = require('./userAuth')
 const authorize = require('./authorize')
-
+const Clusters = require("./clusters")
 const app = express();
 
 const port = process.env.PORT || 9000
@@ -17,19 +17,19 @@ app.use(express.json());
 app.use(cors());
 app.use("/machines",machines)
 app.use("/auth",userAuth)
-
+app.use("/cluster",Clusters)
 
 
 
 //ROUTES
-//get all the clusters
+//get all the login info 
 app.get("/",authorize, async (req, res) => {
     try {
         let client = await MongoClient.connect(dbURL);
-        let db = await client.db('cloud');
-        let data = await db.collection("clusters").find().toArray();
+        let db = await client.db('user');
+        let data = await db.collection("logininfo").find().toArray();
         if (data) {
-            
+            console.log(data)
             res.status(200).json(data)
         } else {
             res.status(404).json({ message: "no data found" })
@@ -43,67 +43,6 @@ app.get("/",authorize, async (req, res) => {
 })
 
 
-//get single cluster info
-app.get("/:clusterName",authorize,async(req,res)=>{
-    try {
-        let client = await MongoClient.connect(dbURL);
-        let db = await client.db('cloud');
-        let data = await db.collection("clusters").findOne({clusterName:req.params.clusterName })
-        if (data) {
-            
-            res.status(200).json(data)
-        } else {
-            res.status(404).json({ message: "no data found" })
-        }
-        client.close();
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
-    }
-})
-
-
-//create a new cluster
-app.post('/add',authorize,async(req,res)=>{
-    try {
-        let client = await MongoClient.connect(dbURL);
-        let db = await client.db('cloud');
-        let data = await db.collection("clusters").findOne({clusterName:req.body.clusterName })
-        if (!data) {
-            await db.collection("clusters").insertOne({clusterName:req.body.clusterName,clusterRegion:req.body.clusterRegion,machines:req.body.machines});
-            res.status('201').json({ message: "cluster created" });
-        } else {
-            res.status("401").json({ message: "cluster already exists" })
-        }
-        client.close();
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
-    }
-
-})
-
-
-//delete a cluster
-app.delete('/delete/:clusterName',authorize, async (req, res) => {
-    try {
-        let client = await MongoClient.connect(dbURL);
-        let db = await client.db('cloud');
-
-        let data = await db.collection("clusters").findOneAndDelete({ clusterName :req.params.clusterName })
-            if(data){
-                res.status(200).json({message:"cluster deleted"})
-            }
-            else {
-                res.status(404).json({ message: "cluster not found" })
-            }  
-            client.close();
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
-    }
-
-})
 
 
 //Start Listening to server
